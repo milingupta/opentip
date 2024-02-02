@@ -1,0 +1,32 @@
+# Xcode
+*.pbxuser
+*.xccheckout
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/
+
+# Derived Data and Archives
+DerivedData/
+Archives/
+
+# Logs
+*.xcactivitylog
+*.ips
+
+# Swift Package Manager
+.build/
+Package.resolved
+
+# Environment configs and sensitive data
+*.plist
+*.env
+
+# Others - add as needed
+.DS_Store
+.idea/
+*.swp
+*~
+.build/
