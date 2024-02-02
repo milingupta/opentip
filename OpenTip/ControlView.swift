@@ -25,7 +25,7 @@ struct ControlView: View {
             }
             
             HStack {
-                Image(systemName: "percent")
+                Image(systemName: isShowingTipPercentTextField ? "chevron.down.circle" : "chevron.forward.circle")
                     .onTapGesture {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             isShowingTipPercentTextField.toggle()
@@ -33,26 +33,31 @@ struct ControlView: View {
                     }
                     .foregroundStyle(.blue)
                 
-                if !isShowingTipPercentTextField {
-                    HStack {
-                        Text("Tip Percentage")
-                        
-                        Spacer()
-                        
-                        Text("\(viewModel.tipPercent)")
-                            .padding(.horizontal)
-                        
-                        Stepper("") {
-                            viewModel.incrementTip()
-                        } onDecrement: {
-                            viewModel.decrementTip()
-                        } onEditingChanged: { _ in
-                            viewModel.calculateTip()
-                        }
-                        .labelsHidden()
+                HStack {
+                    Text("Tip %")
+                    
+                    Spacer()
+                    
+                    Text("\(viewModel.tipPercent)")
+                        .padding(.horizontal)
+                    
+                    Stepper("") {
+                        viewModel.incrementTip()
+                    } onDecrement: {
+                        viewModel.decrementTip()
+                    } onEditingChanged: { _ in
+                        viewModel.calculateTip()
                     }
-                } else {
-                    TextField("Enter Tip Percentage", text: $viewModel.textInputTipPercent)
+                    .labelsHidden()
+                }
+            }
+            
+            if isShowingTipPercentTextField {
+                HStack {
+                    Image(systemName: "keyboard")
+                        .foregroundStyle(.placeholder)
+                    
+                    TextField("Enter Tip %", text: $viewModel.textInputTipPercent)
                         .onChange(of: viewModel.textInputTipPercent) {
                             if viewModel.tipPercent > 100 {
                                 viewModel.tipPercent = 100
