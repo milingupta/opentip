@@ -10,12 +10,13 @@ import SwiftUI
 struct ControlView: View {
     
     @ObservedObject var viewModel: TipViewModel
-    @Binding var isShowingTipPercentTextField: Bool
     
     var body: some View {
         Section("Controls") {
             HStack {
                 Image(systemName: "dollarsign")
+                    .foregroundStyle(.blue)
+                
                 TextField("Enter Bill Amount", text: $viewModel.textInputBillAmount)
                     .fixedSize(horizontal: false, vertical: true)
                     .onChange(of: viewModel.textInputBillAmount) {
@@ -25,39 +26,24 @@ struct ControlView: View {
             }
             
             HStack {
-                Image(systemName: isShowingTipPercentTextField ? "chevron.down.circle" : "chevron.forward.circle")
-                    .onTapGesture {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isShowingTipPercentTextField.toggle()
-                        }
-                    }
+                Image(systemName: "building.columns")
                     .foregroundStyle(.blue)
                 
-                HStack {
-                    Text("Tip %")
-                    
-                    Spacer()
-                    
-                    Text("\(viewModel.tipPercent)")
-                        .padding(.horizontal)
-                    
-                    Stepper("") {
-                        viewModel.incrementTip()
-                    } onDecrement: {
-                        viewModel.decrementTip()
-                    } onEditingChanged: { _ in
+                TextField("Enter Tax Amount", text: $viewModel.textInputTaxAmount)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .onChange(of: viewModel.textInputTaxAmount) {
                         viewModel.calculateTip()
                     }
-                    .labelsHidden()
-                }
+                    .keyboardType(.decimalPad)
             }
             
-            if isShowingTipPercentTextField {
+            
+            if viewModel.isShowingTipPercentTextField {
                 HStack {
-                    Image(systemName: "keyboard")
-                        .foregroundStyle(.placeholder)
+                    Image(systemName: "percent")
+                        .foregroundStyle(.blue)
                     
-                    TextField("Enter Tip %", text: $viewModel.textInputTipPercent)
+                    TextField("Enter Tip Percentage", text: $viewModel.textInputTipPercent)
                         .onChange(of: viewModel.textInputTipPercent) {
                             if viewModel.tipPercent > 100 {
                                 viewModel.tipPercent = 100
@@ -67,10 +53,35 @@ struct ControlView: View {
                         }
                         .keyboardType(.numberPad)
                 }
+            } else {
+                HStack {
+                    Image(systemName: "percent")
+                        .foregroundStyle(.blue)
+                    
+                    HStack {
+                        Text("Tip Percent")
+                        
+                        Spacer()
+                        
+                        Text("\(viewModel.tipPercent)")
+                            .padding(.horizontal)
+                        
+                        Stepper("") {
+                            viewModel.incrementTip()
+                        } onDecrement: {
+                            viewModel.decrementTip()
+                        } onEditingChanged: { _ in
+                            viewModel.calculateTip()
+                        }
+                        .labelsHidden()
+                    }
+                }
             }
             
             HStack {
                 Image(systemName: "person")
+                    .foregroundStyle(.blue)
+                
                 HStack {
                     Text("People")
                     
@@ -92,6 +103,8 @@ struct ControlView: View {
             
             HStack {
                 Image(systemName: "arrow.up")
+                    .foregroundStyle(.blue)
+                
                 HStack {
                     Text("Round Up Tip")
                     
@@ -99,14 +112,29 @@ struct ControlView: View {
                     
                     Text(viewModel.isRoundingUp ? "On" : "Off")
                         .padding(.horizontal)
-                        .foregroundStyle(viewModel.isRoundingUp ? .blue : Color(UIColor.label))
                     
                     Toggle("", isOn: $viewModel.isRoundingUp)
                         .labelsHidden()
-                        .tint(.blue)
                         .onChange(of: viewModel.isRoundingUp) {
                             viewModel.calculateTip()
                         }
+                }
+            }
+            
+            HStack {
+                Image(systemName: "keyboard")
+                    .foregroundStyle(.blue)
+                
+                HStack {
+                    Text("Manual Tip Entry")
+                    
+                    Spacer()
+                    
+                    Text(viewModel.isShowingTipPercentTextField ? "On" : "Off")
+                        .padding(.horizontal)
+                    
+                    Toggle("", isOn: $viewModel.isShowingTipPercentTextField)
+                        .labelsHidden()
                 }
             }
         }
@@ -114,5 +142,5 @@ struct ControlView: View {
 }
 
 #Preview {
-    ControlView(viewModel: TipViewModel(), isShowingTipPercentTextField: .constant(false))
+    ControlView(viewModel: TipViewModel())
 }
